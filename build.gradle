@@ -1,0 +1,26 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+/* Project level build script */
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath "io.realm:realm-gradle-plugin:2.0.2"
+        classpath 'me.tatarka:gradle-retrolambda:3.1.0' // Lambda programming: use to simplify RxAndroid function
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+//        maven { url 'https://maven.fabric.io/public' } // maven for twitter sdk
+        maven { url "https://clojars.org/repo/" } // automatically save and restore instance state
+//        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" } // ActiveAndroid
+        maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' } // Realm
+    }
+}
