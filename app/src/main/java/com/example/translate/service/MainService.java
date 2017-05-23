@@ -40,6 +40,9 @@ public class MainService extends Service {
 
     private int statusBarHeight = 0;
 
+    private int overlayButtonWidth;
+    private int overlayButtonHeight;
+
     private int lastX = -1;
     private int lastY = -1;
 
@@ -99,7 +102,11 @@ public class MainService extends Service {
 
     private void init() {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+
         statusBarHeight = MyUtils.getStatusBarHeight(MainService.this);
+
+        overlayButtonWidth = getResources().getDimensionPixelOffset(R.dimen.overlay_button_width);
+        overlayButtonHeight = getResources().getDimensionPixelOffset(R.dimen.overlay_button_height);
     }
 
     private void initView() {
@@ -154,8 +161,8 @@ public class MainService extends Service {
                 lastX = (int) e2.getRawX();
                 lastY = (int) e2.getRawY();
 
-                params.x = lastX - container.getWidth() / 2;
-                params.y = lastY - container.getHeight() / 2 - statusBarHeight;
+                params.x = lastX - overlayButtonWidth / 2;
+                params.y = lastY - overlayButtonHeight / 2 - statusBarHeight;
                 windowManager.updateViewLayout(container, params);
 
                 // Collapse Overlay View when moving
@@ -228,8 +235,8 @@ public class MainService extends Service {
     public void resetLastState() {
         if (savedX >= 0 && savedY > 0) {
             LayoutParams params = (LayoutParams) container.getLayoutParams();
-            params.x = savedX;
-            params.y = savedY;
+            params.x = savedX - overlayButtonWidth / 2;
+            params.y = savedY - overlayButtonHeight / 2 - statusBarHeight;
             windowManager.updateViewLayout(container, params);
         }
     }

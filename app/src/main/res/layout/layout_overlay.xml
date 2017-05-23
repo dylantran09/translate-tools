@@ -1,10 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_view"
     android:layout_width="match_parent"
-    android:background="@color/LightSlateGray"
     android:layout_height="match_parent"
+    android:background="@color/White"
     android:clickable="true"
     android:orientation="vertical">
 
-</FrameLayout>
+    <LinearLayout
+        android:id="@+id/ll_lang_setup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp">
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/sp_source_lang"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:entries="@array/language"
+            android:textAlignment="center" />
+
+        <ImageView
+            android:id="@+id/bt_switch_lang"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_swap_horizontal" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/sp_target_lang"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:entries="@array/language"
+            android:textAlignment="center" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line_lang_setup"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@+id/ll_lang_setup"
+        android:background="@color/LightGrey" />
+
+    <LinearLayout
+        android:id="@+id/ll_input_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/line_lang_setup">
+
+        <android.support.v7.widget.AppCompatEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/editTextBackground"
+            android:hint="Input here"
+            android:imeOptions="actionSearch"
+            android:inputType="text" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_input_container" />
+</RelativeLayout>
