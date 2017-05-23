@@ -17,8 +17,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".feature.MainActivity"
-            android:launchMode="singleTask"
+            android:name=".feature.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Default">
             <intent-filter>
@@ -28,14 +27,29 @@
         </activity>
 
         <activity
+            android:name=".feature.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Default" />
+
+        <activity
             android:name=".feature.OverlayActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent" />
 
         <service
-            android:name=".feature.main.MainService"
-            android:exported="false" />
+            android:name="com.example.translate.service.MainService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.example.translate.service.action.START" />
+                <action android:name="com.example.translate.service.action.STOP" />
+                <action android:name="com.example.translate.service.action.EXPAND" />
+                <action android:name="com.example.translate.service.action.COLLAPSE" />
+                <action android:name="com.example.translate.service.action.SHOW" />
+                <action android:name="com.example.translate.service.action.HIDE" />
+            </intent-filter>
+        </service>
 
         <!--<meta-data
             android:name="com.google.android.gms.version"

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'realm-android'
 //apply plugin: 'me.tatarka.retrolambda' // Lambda programming: use to simplify RxAndroid function
 
@@ -99,7 +98,7 @@ dependencies {
 
     /* DAGGER 2 */
 //    compile "com.google.dagger:dagger-android:${DAGGER2_VERSION}"
-//    compile "com.google.dagger:dagger-android-support:2.4${DAGGER2_VERSION}" // if you use the support libraries
+//    compile "com.google.dagger:dagger-android-support:${DAGGER2_VERSION}" // if you use the support libraries
 //    annotationProcessor "com.google.dagger:dagger-android-processor:${DAGGER2_VERSION}"
 
     /* RxAndroid */

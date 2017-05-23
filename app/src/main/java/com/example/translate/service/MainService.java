@@ -1,4 +1,4 @@
-package com.example.translate.feature.main;
+package com.example.translate.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import android.widget.ImageView;
 
 import com.example.translate.R;
 import com.example.translate.feature.OverlayActivity;
+import com.example.translate.util.Action;
 import com.example.translate.util.MyUtils;
 
 import core.util.DLog;
@@ -37,8 +38,13 @@ public class MainService extends Service {
 
     private GestureDetector gestureDetector;
 
-    private int lastX = 0;
-    private int lastY = 0;
+    private int statusBarHeight = 0;
+
+    private int lastX = -1;
+    private int lastY = -1;
+
+    private int savedX = -1;
+    private int savedY = -1;
 
     @Override
     public void onCreate() {
@@ -51,6 +57,30 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            String action = intent.getAction();
+            DLog.d(TAG, "onStartCommand with " + action);
+            switch (action) {
+                case Action.ACTION_START:
+                    processStart();
+                    break;
+                case Action.ACTION_STOP:
+                    processStop();
+                    break;
+                case Action.ACTION_EXPAND:
+                    processExpand();
+                    break;
+                case Action.ACTION_COLLAPSE:
+                    processCollapse();
+                    break;
+                case Action.ACTION_SHOW:
+                    processShow();
+                    break;
+                case Action.ACTION_HIDE:
+                    processHide();
+                    break;
+            }
+        }
         return START_STICKY;
     }
 
@@ -69,6 +99,7 @@ public class MainService extends Service {
 
     private void init() {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        statusBarHeight = MyUtils.getStatusBarHeight(MainService.this);
     }
 
     private void initView() {
@@ -85,7 +116,7 @@ public class MainService extends Service {
 
         params.gravity = Gravity.TOP | Gravity.START;
         params.x = 0;
-        params.y = MyUtils.getStatusBarHeight(MainService.this);
+        params.y = statusBarHeight;
         windowManager.addView(container, params);
     }
 
@@ -102,12 +133,12 @@ public class MainService extends Service {
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                lastX = (int) e.getRawX();
-                lastY = (int) e.getRawY();
+                savedX = (int) e.getRawX();
+                savedY = (int) e.getRawY();
 
                 LayoutParams params = (LayoutParams) container.getLayoutParams();
                 params.x = 0;
-                params.y = MyUtils.getStatusBarHeight(MainService.this);
+                params.y = statusBarHeight;
                 windowManager.updateViewLayout(container, params);
                 openOverlayView();
                 return false;
@@ -120,13 +151,15 @@ public class MainService extends Service {
                 }
                 LayoutParams params = (LayoutParams) container.getLayoutParams();
 
-                int x_cord = (int) e2.getRawX();
-                int y_cord = (int) e2.getRawY();
+                lastX = (int) e2.getRawX();
+                lastY = (int) e2.getRawY();
 
-                params.x = x_cord - container.getWidth() / 2;
-                params.y = y_cord - container.getHeight() / 2 - MyUtils.getStatusBarHeight(MainService.this);
+                params.x = lastX - container.getWidth() / 2;
+                params.y = lastY - container.getHeight() / 2 - statusBarHeight;
                 windowManager.updateViewLayout(container, params);
 
+                // Collapse Overlay View when moving
+                //processCollapse();
                 return false;
             }
 
@@ -148,11 +181,57 @@ public class MainService extends Service {
         });
     }
 
+    private void processStart() {
+        // TODO
+    }
+
+    private void processStop() {
+        // TODO
+        stopSelf();
+    }
+
+    private void processExpand() {
+        Intent intent = new Intent(this, OverlayActivity.class);
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK
+                | FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    private void processCollapse() {
+        Intent intent = new Intent();
+        intent.setAction(Action.ACTION_CLOSE_OVERLAY_VIEW);
+        sendBroadcast(intent);
+        resetLastState();
+    }
+
+    private void processShow() {
+        processCollapse();
+        if (container != null) {
+            container.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void processHide() {
+        if (container != null) {
+            container.setVisibility(View.GONE);
+        }
+        processStop();
+    }
+
     private void openOverlayView() {
         Intent intent = new Intent(this, OverlayActivity.class);
         intent.setFlags(FLAG_ACTIVITY_NEW_TASK
                         | FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    public void resetLastState() {
+        if (savedX >= 0 && savedY > 0) {
+            LayoutParams params = (LayoutParams) container.getLayoutParams();
+            params.x = savedX;
+            params.y = savedY;
+            windowManager.updateViewLayout(container, params);
+        }
     }
 
     @Override

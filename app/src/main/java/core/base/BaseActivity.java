@@ -298,6 +298,21 @@ public abstract class BaseActivity extends AppCompatActivity
      */
 
     @Override
+    public void onBaseCreate() {
+        // do some initialization here
+    }
+
+    @Override
+    public void onBaseResume() {
+        // do something when activity resume
+    }
+
+    @Override
+    public void onBaseFree() {
+        // do something when activity finished
+    }
+
+    @Override
     public String getResourceString(int id, Object... formatArgs) {
         try {
             return getResources().getString(id, formatArgs);

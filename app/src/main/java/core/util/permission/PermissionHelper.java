@@ -19,18 +19,6 @@ public class PermissionHelper {
     private static final int REQUEST_ALL = 5;
     private static final int REQUEST_APP_SETTING = 6;
     private static final String[] PERMISSIONS_ALL = {
-            // Permissions for melonSDK
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            // Permissions for subscription
-            Manifest.permission.SEND_SMS,
-            // Permissions for OTP
-            Manifest.permission.RECEIVE_SMS,
-            Manifest.permission.READ_SMS,
-            // Permissions for TestFairy
-//            Manifest.permission.READ_PHONE_STATE
     };
 
     private static final String[] PERMISSIONS_FOR_OTP = {

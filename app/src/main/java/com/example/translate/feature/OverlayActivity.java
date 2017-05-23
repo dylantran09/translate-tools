@@ -1,17 +1,20 @@
 package com.example.translate.feature;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.translate.R;
-import com.example.translate.feature.main.MainService;
+import com.example.translate.receiver.MainReceiver;
+import com.example.translate.service.MainService;
+import com.example.translate.util.Action;
 import com.example.translate.util.MyUtils;
 
 import butterknife.BindView;
@@ -21,31 +24,12 @@ import core.util.DLog;
 public class OverlayActivity extends BaseActivity {
     public static final String TAG = OverlayActivity.class.getSimpleName();
 
-    @BindView(R.id.main_container)
+    @BindView(R.id.overlay_main_container)
     View mainContainer;
     @BindView(R.id.main_view)
     View mainView;
-    @BindView(R.id.bt_open)
-    FloatingActionButton btOpen;
 
-    private MainService mainService;
-    private boolean isServiceBound;
-
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            DLog.d(TAG, "musicConnection");
-            MainService.LocalBinder binder = (MainService.LocalBinder) service;
-            //get service
-            mainService = binder.getService();
-            isServiceBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isServiceBound = false;
-        }
-    };
+    private BroadcastReceiver mainReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +40,17 @@ public class OverlayActivity extends BaseActivity {
 
     @Override
     public void onBaseCreate() {
-        // do nothing
+        // create Receiver
+        mainReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switch (intent.getAction()) {
+                    case Action.ACTION_CLOSE_OVERLAY_VIEW:
+                        collapseOverlay();
+                        break;
+                }
+            }
+        };
     }
 
     @Override
@@ -72,13 +66,12 @@ public class OverlayActivity extends BaseActivity {
     @Override
     public void onBindView() {
         setupView();
-        registerSingleAction(mainContainer, btOpen);
+        registerSingleAction(mainContainer);
     }
 
     private void setupView() {
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mainView.getLayoutParams().height = getOverlayViewHeight();
-        btOpen.setVisibility(View.GONE);
     }
 
     @Override
@@ -89,25 +82,28 @@ public class OverlayActivity extends BaseActivity {
     @Override
     public void onBaseResume() {
         // onResume
+        if (mainReceiver != null) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Action.ACTION_CLOSE_OVERLAY_VIEW);
+            registerReceiver(mainReceiver, filter);
+        }
     }
 
     @Override
-    public void onBaseFree() {
+    protected void onPause() {
+        super.onPause();
         // onStop
+        if (mainReceiver != null) {
+            unregisterReceiver(mainReceiver);
+        }
+        collapseOverlay();
     }
 
     @Override
     public void onSingleClick(View v) {
         switch (v.getId()) {
-            case R.id.main_container:
-                finish();
-                overridePendingTransition(0, 0);
-                break;
-            case R.id.bt_open:
-                Intent service = new Intent(this, MainService.class);
-                startService(service);
-                bindService(service, serviceConnection, Context.BIND_AUTO_CREATE);
-                finish();
+            case R.id.overlay_main_container:
+                collapseOverlay();
                 break;
         }
     }
@@ -115,5 +111,10 @@ public class OverlayActivity extends BaseActivity {
     public int getOverlayViewHeight() {
         return MyUtils.getScreenHeight(OverlayActivity.this)
                 - (2 * MyUtils.getStatusBarHeight(OverlayActivity.this) + getResources().getDimensionPixelOffset(R.dimen.overlay_button_height));
+    }
+
+    private void collapseOverlay() {
+        finish();
+        overridePendingTransition(0, 0);
     }
 }
