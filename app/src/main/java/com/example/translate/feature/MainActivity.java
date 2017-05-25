@@ -15,6 +15,7 @@ import android.view.View;
 import com.example.translate.R;
 import com.example.translate.service.MainService;
 import com.example.translate.util.Action;
+import com.example.translate.util.MyUtils;
 
 import butterknife.BindView;
 import core.base.BaseActivity;
@@ -77,7 +78,9 @@ public class MainActivity extends BaseActivity {
             filter.addAction(Action.ACTION_CLOSE_OVERLAY_VIEW);
             registerReceiver(mainReceiver, filter);
         }
-        startMainService(Action.ACTION_HIDE);
+        if (MyUtils.isServiceRunning(this, MainService.class)) {
+            startMainService(Action.ACTION_HIDE);
+        }
     }
 
     @Override
